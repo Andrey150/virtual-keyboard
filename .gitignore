@@ -1,5 +1,8 @@
 #IDE files
 .idea
 
+#lock file
+package-lock.json
+
 # Dependency directories
 node_modules/
