@@ -36,7 +36,7 @@ export default function Keyboard() {
 
   renderKeyboard();
 
-  document.addEventListener('keypress', function(event) {
+  document.addEventListener('keydown', function(event) {
     const key = document.querySelector(`.key[data="${event.keyCode}"]`);
 
     if (key) {
@@ -46,9 +46,7 @@ export default function Keyboard() {
 
       key.classList.add('active')
     }
-  });
 
-  document.addEventListener('keydown', function(event) {
     if (event.code === 'ShiftLeft') {
       isShiftPress = true;
     }
