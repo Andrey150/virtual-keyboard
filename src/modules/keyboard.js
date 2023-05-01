@@ -16,19 +16,26 @@ export default function Keyboard() {
 
   let isShiftPress = false;
   let isAltPress = false;
+  let isCaps = false;
 
-  function updateKeyboard(lang) {
+  function updateKeyboard(lang, shift, caps) {
     const keys = document.querySelectorAll(".key");
     keys.forEach((key, idx) => {
       const item = lang()[idx];
-      key.innerHTML = item.symbol;
+      if (shift) {
+        key.innerHTML = item.shift ? item.shift : item.symbol;
+      } else if (caps) {
+        key.innerHTML = item.caps ? item.caps : item.symbol;
+      } else {
+        key.innerHTML = item.symbol;
+      }
     })
   }
 
   function renderKeyboard () {
     Object.values(lang()).map(item => {
       keyBoard.insertAdjacentHTML('beforeend',
-        `<div class="key${item.specClass ? ' ' + item.specClass : ''}" data=${item.keyCode}>
+        `<div class="key${item.specClass ? ' ' + item.specClass : ''}" data=${item.code}>
           ${caps && item.caps ? item.caps : item.symbol}
         </div>`);
     });
@@ -37,21 +44,29 @@ export default function Keyboard() {
   renderKeyboard();
 
   document.addEventListener('keydown', function(event) {
-    const key = document.querySelector(`.key[data="${event.keyCode}"]`);
+    const key = document.querySelector(`.key[data="${event.code}"]`);
+    const keyCaps = document.querySelector(`.caps`);
+
 
     if (key) {
-      if (event.keyCode === 20) {
-        key.classList.toggle('active');
+      key.classList.add('active');
+      if (event.code === 'CapsLock') {
+        isCaps = !isCaps;
+        keyCaps.classList.toggle('active')
+        updateKeyboard(lang, isShiftPress, isCaps);
       }
-
-      key.classList.add('active')
     }
 
-    if (event.code === 'ShiftLeft') {
+    if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
       isShiftPress = true;
+      updateKeyboard(lang, isShiftPress);
     }
     if (event.code === 'AltLeft') {
       isAltPress = true;
+    }
+
+    if (isShiftPress) {
+      keyBoard.classList.add('shift');
     }
 
     if (isShiftPress && isAltPress) {
@@ -66,15 +81,23 @@ export default function Keyboard() {
   });
 
   document.addEventListener('keyup', function (event) {
-    const key = document.querySelector(`.key[data="${event.keyCode}"]`);
+    const key = document.querySelector(`.key[data="${event.code}"]`);
 
     if (key) {
-      key.classList.remove('active')
+      if (event.code !== 'CapsLock') {;
+        key.classList.remove('active');
+      }
+
     }
 
-    if (event.code === 'ShiftLeft') {
+    if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
       isShiftPress = false;
+      updateKeyboard(lang, isShiftPress);
     }
+    if (!isShiftPress ) {
+      keyBoard.classList.remove('shift')
+    }
+
     if (event.code === 'AltLeft') {
       isAltPress = false;
     }
