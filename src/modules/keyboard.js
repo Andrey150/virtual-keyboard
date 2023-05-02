@@ -63,7 +63,6 @@ export default function Keyboard() {
       if (event.code !== 'CapsLock') {
         key.classList.add('active');
       }
-
     }
 
     if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
@@ -87,6 +86,17 @@ export default function Keyboard() {
         updateKeyboard(getLang);
       }
     }
+
+    if (
+        event.code === 'ControlLeft'
+        || event.code === 'ControlLeft'
+        || event.code === 'MetaLeft'
+        || event.code === 'AltLeft'
+        || event.code === 'AltRight'
+        || event.code === 'ControlRight'
+    ) {
+        event.preventDefault()
+    }
   });
 
   document.addEventListener('keyup', function (event) {
@@ -96,7 +106,6 @@ export default function Keyboard() {
       if (event.code !== 'CapsLock') {
         key.classList.remove('active');
       }
-
     }
 
     document.querySelectorAll('.caps').forEach(keyCaps => {
