@@ -5,9 +5,7 @@ export default function Keyboard() {
   keyBoard.classList.add('keyboard', 'ru');
   keyBoard.setAttribute('id', 'keyboard');
 
-  const caps = keyBoard.classList.contains('caps');
-
-  const lang = () => {
+  const getLang = () => {
     if (keyBoard.classList.contains('ru')) {
       return symbolsRu
     }
@@ -18,8 +16,9 @@ export default function Keyboard() {
   let isAltPress = false;
   let isCaps = false;
 
-  function updateKeyboard(lang, shift, caps) {
+  function updateKeyboard(lang, shift = false, caps = false) {
     const keys = document.querySelectorAll(".key");
+
     keys.forEach((key, idx) => {
       const item = lang()[idx];
       if (shift) {
@@ -33,10 +32,10 @@ export default function Keyboard() {
   }
 
   function renderKeyboard () {
-    Object.values(lang()).map(item => {
+    Object.values(getLang()).map(item => {
       keyBoard.insertAdjacentHTML('beforeend',
         `<div class="key${item.specClass ? ' ' + item.specClass : ''}" data=${item.code}>
-          ${caps && item.caps ? item.caps : item.symbol}
+          ${isCaps && item.caps ? item.caps : item.symbol}
         </div>`);
     });
   }
@@ -49,17 +48,27 @@ export default function Keyboard() {
 
 
     if (key) {
-      key.classList.add('active');
       if (event.code === 'CapsLock') {
         isCaps = !isCaps;
-        keyCaps.classList.toggle('active')
-        updateKeyboard(lang, isShiftPress, isCaps);
+        keyBoard.classList.toggle('caps')
+        if (isCaps) {
+          keyCaps.classList.add('active');
+        }
+        if (!isCaps) {
+          keyCaps.classList.remove('active');
+        }
+
+        updateKeyboard(getLang, isShiftPress, isCaps);
       }
+      if (event.code !== 'CapsLock') {
+        key.classList.add('active');
+      }
+
     }
 
     if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
       isShiftPress = true;
-      updateKeyboard(lang, isShiftPress);
+      updateKeyboard(getLang, isShiftPress);
     }
     if (event.code === 'AltLeft') {
       isAltPress = true;
@@ -72,10 +81,10 @@ export default function Keyboard() {
     if (isShiftPress && isAltPress) {
       if (keyBoard.classList.contains('ru')) {
         keyBoard.classList.replace('ru', 'en');
-        updateKeyboard(lang);
+        updateKeyboard(getLang);
       } else {
         keyBoard.classList.replace('en', 'ru');
-        updateKeyboard(lang);
+        updateKeyboard(getLang);
       }
     }
   });
@@ -90,9 +99,15 @@ export default function Keyboard() {
 
     }
 
+    document.querySelectorAll('.caps').forEach(keyCaps => {
+      if (!isCaps) {
+        keyCaps.classList.remove('active');
+      }
+    });
+
     if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
       isShiftPress = false;
-      updateKeyboard(lang, isShiftPress);
+      updateKeyboard(getLang, isShiftPress);
     }
     if (!isShiftPress ) {
       keyBoard.classList.remove('shift')
