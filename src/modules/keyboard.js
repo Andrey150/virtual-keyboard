@@ -84,7 +84,7 @@ export default function Keyboard() {
     const key = document.querySelector(`.key[data="${event.code}"]`);
 
     if (key) {
-      if (event.code !== 'CapsLock') {;
+      if (event.code !== 'CapsLock') {
         key.classList.remove('active');
       }
 
